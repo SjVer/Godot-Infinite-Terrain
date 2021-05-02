@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://scripts/Terrains.gd" type="Script" id=1]
+[ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scripts/World.gd" type="Script" id=3]
+
+[sub_resource type="OpenSimplexNoise" id=1]
+octaves = 7
+period = 134.7
+lacunarity = 2.92
+
+[node name="Root" type="Spatial"]
+script = ExtResource( 3 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 80.5893, 26.5232, 0 )
+visible = false
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 110.528, -5.23866 )
+MOVE_SPEED = 10.0
+MOUSE_SENSITIVITY = 0.1
+
+[node name="Terrain" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 63.1483, 0 )
+script = ExtResource( 1 )
+auto_update = true
+player_node_path = NodePath("../Player")
+noise_map = SubResource( 1 )
+max_chunks = 32
+LOD_percent = 10
+add_shaders = true

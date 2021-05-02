@@ -1,0 +1,47 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=2]
+
+[ext_resource path="res://materials/Noise.tres" type="OpenSimplexNoise" id=1]
+
+[sub_resource type="Shader" id=1]
+resource_local_to_scene = true
+resource_name = "terrain"
+code = "shader_type spatial;
+
+uniform sampler2D noise;
+
+uniform float fade_multiplier: hint_range(-100,100) = 10.0;
+uniform float shore_height: hint_range(-30,30) = 0.0;
+uniform vec4 bottom_color: hint_color;
+uniform vec4 top_color: hint_color;
+uniform float strength: hint_range(0,200) = 1.0;
+uniform bool do_noise: false;
+
+void vertex() {
+	if (do_noise) {
+		float height = texture(noise, VERTEX.xz / 2.0 + 0.5).x * 60.0;
+		VERTEX.y += height;
+	}
+	float cval = VERTEX.y / fade_multiplier - shore_height;
+	vec4 newc = mix(bottom_color, top_color, cval) * (strength/100.0);
+	COLOR.xyz = newc.xyz; //color.xyz * vec3(cval);
+}
+
+void fragment() {
+	ALBEDO = COLOR.xyz;
+}"
+
+[sub_resource type="NoiseTexture" id=2]
+width = 64
+height = 64
+bump_strength = 20.4
+noise = ExtResource( 1 )
+
+[resource]
+shader = SubResource( 1 )
+shader_param/fade_multiplier = 1.0
+shader_param/shore_height = 0.0
+shader_param/bottom_color = Color( 0.0352941, 0.0941176, 0.415686, 1 )
+shader_param/top_color = Color( 0.313726, 1, 0, 1 )
+shader_param/strength = 6.251
+shader_param/do_noise = false
+shader_param/noise = SubResource( 2 )
